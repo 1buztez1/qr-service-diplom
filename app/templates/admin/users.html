@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление пользователями</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: #FFFFFF;
+            color: #000000;
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .vertical-nav {
+            width: 240px;
+            min-height: 100vh;
+            background: #FFFFFF;
+            border-right: 2px solid #000000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 2rem;
+            background: #000000;
+            color: #FFFFFF;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 15px;
+            letter-spacing: -2px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #ff375f;
+            flex-shrink: 0;
+        }
+
+        .nav-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #000000;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 15px;
+            border: 2px solid #000000;
+            transition: all 0.2s;
+            background: #FFFFFF;
+            text-align: left;
+        }
+
+        .nav-link.active {
+            background: #000000;
+            color: #FFFFFF;
+            transform: translateX(4px);
+        }
+
+        .nav-link:hover:not(.active) {
+            background: #ffeb00;
+            transform: translateX(2px);
+        }
+
+        .nav-footer {
+            font-size: 0.8rem;
+            color: #666;
+            border-top: 1px solid #000000;
+            padding: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 25px 40px;
+            max-width: calc(100vw - 240px);
+        }
+
+        .header-section {
+            margin-bottom: 25px;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .add-user-btn {
+            padding: 12px 20px;
+            border: 2px solid #000000;
+            background: #000000;
+            color: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .add-user-btn:hover {
+            background: #ff375f;
+            transform: translateY(-2px);
+        }
+
+        .table-container {
+            border: 3px solid #000000;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            background: #FFFFFF;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+        }
+
+        .users-table th {
+            background: #000000;
+            color: #FFFFFF;
+            text-align: left;
+            padding: 18px 15px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-bottom: 2px solid #000000;
+        }
+
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #000000;
+        }
+
+        .users-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .users-table tr:hover {
+            background: #ffeb00;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-messages .alert {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 2px solid #000000;
+            background: #f5f5f5;
+            color: #000000;
+            font-weight: 700;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .vertical-nav {
+                position: static;
+                width: 100%;
+                min-height: auto;
+                max-height: 70vh;
+                border-right: none;
+                border-bottom: 2px solid #000000;
+                padding: 0;
+            }
+            .logo { margin: 15px; font-size: 1.8rem; }
+            .nav-scrollable { padding: 0 15px; max-height: calc(70vh - 140px); }
+            .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px; }
+            .nav-link { padding: 8px 12px; font-size: 0.9rem; flex: 1; min-width: 120px; text-align: center; }
+            .stats-summary { display: none; }
+            .main-content { margin-left: 0; padding: 15px; max-width: 100%; }
+            .page-title { font-size: 1.6rem; }
+            .add-user-btn { width: 100%; text-align: center; font-size: 0.9rem; }
+            .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .users-table { min-width: 600px; font-size: 0.8rem; }
+            .users-table th, .users-table td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="vertical-nav">
+        <div class="logo">HARDWARE</div>
+        <div class="nav-scrollable">
+            <div class="nav-links">
+                <a href="{{ url_for('main.index') }}" class="nav-link">ПЕРИФЕРИЯ</a>
+                <a href="{{ url_for('admin.users') }}" class="nav-link active">ПОЛЬЗОВАТЕЛИ</a>
+                <!-- <a href="#" class="nav-link">СЕТЬ</a>
+                <a href="#" class="nav-link">СКЛАД</a> -->
+            </div>
+        </div>
+        <div class="nav-footer">
+            АДМИН-ПАНЕЛЬ v2.5
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="header-section">
+            <h1 class="page-title">УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ</h1>
+            <a href="{{ url_for('admin.add_user') }}" class="add-user-btn">+ ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ</a>
+        </div>
+
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>ФИО</th>
+                        <th>Группа</th>
+                        <th>Дата создания</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.l_name }} {{ user.f_name }} {{ user.m_name }}</td>
+                        <td>{{ user.user_group.g_name if user.user_group else 'Не указана' }}</td>
+                        <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') if user.created_at else 'Не указана' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПЕРИФЕРИЯ | АДМИН-ПАНЕЛЬ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: #FFFFFF;
+            color: #000000;
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .vertical-nav {
+            width: 240px;
+            min-height: 100vh;
+            background: #FFFFFF;
+            border-right: 2px solid #000000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 2rem;
+            background: #000000;
+            color: #FFFFFF;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 15px;
+            letter-spacing: -2px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #ff375f;
+            flex-shrink: 0;
+        }
+
+        .nav-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #000000;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 15px;
+            border: 2px solid #000000;
+            transition: all 0.2s;
+            background: #FFFFFF;
+            text-align: left;
+        }
+
+        .nav-link.active {
+            background: #000000;
+            color: #FFFFFF;
+            transform: translateX(4px);
+        }
+
+        .nav-link:hover:not(.active) {
+            background: #ffeb00;
+            transform: translateX(2px);
+        }
+
+        .stats-summary {
+            margin-bottom: 20px;
+            padding: 12px;
+            border: 2px solid #000000;
+            background: #f5f5f5;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .nav-footer {
+            font-size: 0.8rem;
+            color: #666;
+            border-top: 1px solid #000000;
+            padding: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 25px 40px;
+            max-width: calc(100vw - 240px);
+        }
+
+        .header-section {
+            margin-bottom: 25px;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .title-and-button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .add-device-btn {
+            padding: 12px 20px;
+            border: 2px solid #000000;
+            background: #000000;
+            color: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .add-device-btn:hover {
+            background: #ff375f;
+            transform: translateY(-2px);
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.95rem;
+            min-width: 250px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            background: #ffeb00;
+        }
+
+        .table-container {
+            border: 3px solid #000000;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            background: #FFFFFF;
+        }
+
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+        }
+
+        .devices-table th {
+            background: #000000;
+            color: #FFFFFF;
+            text-align: left;
+            padding: 18px 15px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-bottom: 2px solid #000000;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .devices-table th:hover {
+            background: #333333;
+        }
+
+        .devices-table th.sort-asc::after {
+            content: " ↑";
+            color: #ff375f;
+        }
+
+        .devices-table th.sort-desc::after {
+            content: " ↓";
+            color: #ff375f;
+        }
+
+        .devices-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #000000;
+            vertical-align: middle;
+        }
+
+        .devices-table tr:hover {
+            background: #ffeb00;
+            cursor: pointer;
+            transform: translateX(2px);
+            transition: transform 0.2s;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-weight: 700;
+            border: 2px solid #000000;
+            font-size: 0.9rem;
+            text-align: center;
+            width: 150px;
+            box-sizing: border-box;
+        }
+
+        .status-normal { background: #00d26a; color: #000000; }
+        .status-warning { background: #ffeb00; color: #000000; }
+        .status-error { background: #ff375f; color: #FFFFFF; }
+        .status-repair { background: #375fff; color: #FFFFFF; }
+        .status-reserve { background: #666666; color: #FFFFFF; }
+
+        .device-link {
+            color: #000000;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 3px 8px;
+            border: 2px solid #000000;
+            background: #ffffff;
+            display: inline-block;
+        }
+
+        .device-link:hover {
+            background: #ff375f;
+            color: #ffffff;
+        }
+
+        .nav-scrollable::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .nav-scrollable::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .nav-scrollable::-webkit-scrollbar-thumb {
+            background: #000000;
+            border-radius: 0;
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .vertical-nav {
+                position: static;
+                width: 100%;
+                min-height: auto;
+                max-height: 70vh;
+                border-right: none;
+                border-bottom: 2px solid #000000;
+                padding: 0;
+            }
+            .logo { margin: 15px; font-size: 1.8rem; }
+            .nav-scrollable { padding: 0 15px; max-height: calc(70vh - 140px); }
+            .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px; }
+            .nav-link { padding: 8px 12px; font-size: 0.9rem; flex: 1; min-width: 120px; text-align: center; }
+            .stats-summary { display: none; }
+            .main-content { margin-left: 0; padding: 15px; max-width: 100%; }
+            .header-section { margin-bottom: 15px; padding-bottom: 15px; gap: 10px; }
+            .title-and-button { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .page-title { font-size: 1.6rem; }
+            .add-device-btn { font-size: 0.9rem; width: 100%; text-align: center; }
+            .filters { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="vertical-nav">
+        <div class="logo">HARDWARE</div>
+        <div class="nav-scrollable">
+            <div class="nav-links">
+                <a href="{{ url_for('main.index') }}" class="nav-link active">ПЕРИФЕРИЯ</a>
+                {% if current_user.group_id == 1 %}
+                <a href="{{ url_for('admin.users') }}" class="nav-link">ПОЛЬЗОВАТЕЛИ</a>
+                {% endif %}
+                <!-- <a href="#" class="nav-link">СЕТЬ</a>
+                <a href="#" class="nav-link">СКЛАД</a> -->
+            </div>
+            <div class="stats-summary">
+                <div class="stat-item">
+                    <span>Всего устройств:</span>
+                    <span style="font-weight: 700;">{{count_tech}}</span>
+                </div>
+                <div class="stat-item">
+                    <span style="color: #00d26a;">Работает:</span>
+                    <span style="font-weight: 700;">{{count_tech_1}}</span>
+                </div>
+                <div class="stat-item">
+                    <span style="color: #ff375f;">Ошибки:</span>
+                    <span style="font-weight: 700;">{{count_tech_3}}</span>
+                </div>
+                <div class="stat-item">
+                    <span style="color: #ffeb00;">Внимание:</span>
+                    <span style="font-weight: 700;">{{count_tech_2}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="nav-footer">
+            АДМИН-ПАНЕЛЬ v2.5
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="header-section">
+            <div class="title-and-button">
+                <h1 class="page-title">КОМПЬЮТЕРНАЯ ПЕРИФЕРИЯ</h1>
+                {% if current_user.group_id == 1 %}
+                <a href="{{ url_for('tech.add_device') }}" class="add-device-btn">+ ДОБАВИТЬ ПЕРИФЕРИЮ</a>
+                {% endif %}
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <span class="filter-label">СТАТУС:</span>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">ВСЕ УСТРОЙСТВА</option>
+                        <option value="normal">Работает</option>
+                        <option value="warning">Требует внимания</option>
+                        <option value="error">Неисправен</option>
+                        <option value="repair">В ремонте</option>
+                        <!-- <option value="reserve">РЕЗЕРВ</option> -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">ТИП:</span>
+                    <select class="filter-select" id="typeFilter">
+                        <option value="all">ВСЕ ТИПЫ</option>
+                        <option value="keyboard">КЛАВИАТУРА</option>
+                        <option value="mouse">МЫШЬ</option>
+                        <option value="monitor">МОНИТОР</option>
+                        <option value="printer">ПРИНТЕР</option>
+                    </select>
+                </div>
+                <input type="text" class="search-box" id="searchInput" placeholder="ПОИСК...">
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="devices-table" id="devicesTable">
+                <thead>
+                    <tr>
+                        <th data-sort="id">ID УСТРОЙСТВА</th>
+                        <th data-sort="name">НАЗВАНИЕ МОДЕЛИ</th>
+                        <th data-sort="type">ТИП УСТРОЙСТВА</th>
+                        <th data-sort="status">СТАТУС</th>
+                        <th>ДЕТАЛИ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in tech %}
+                    <tr>
+                        <td>{{item.id}}</td>
+                        <td>{{item.tech_name}}</td>
+                        <td>{{item.tech_group.group_name}}</td>
+                        <td>
+                            {% if item.status.id == 1 %}
+                            <span class="status-badge status-normal">{{ item.status.status_name }}</span>
+                            {% endif %}
+                            {% if item.status.id == 2 %}
+                            <span class="status-badge status-warning">{{ item.status.status_name }}</span>
+                            {% endif %}
+                            {% if item.status.id == 3 %}
+                            <span class="status-badge status-error">{{ item.status.status_name }}</span>
+                            {% endif %}
+                            {% if item.status.id == 4 %}
+                            <span class="status-badge status-repair">{{ item.status.status_name }}</span>
+                            {% endif %}
+                        </td>
+                        <td><a href="{{ url_for('tech.view_tech', id=item.id) }}" class="device-link">ПРОСМОТР</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Простая фильтрация на фронтенде
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
+        document.getElementById('typeFilter').addEventListener('change', filterTable);
+        document.getElementById('searchInput').addEventListener('input', filterTable);
+
+        // Сортировка таблицы
+        let currentSort = { column: null, direction: 'asc' };
+
+        document.querySelectorAll('.devices-table th[data-sort]').forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.getAttribute('data-sort');
+                sortTable(column);
+            });
+        });
+
+        function sortTable(column) {
+            const table = document.getElementById('devicesTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Определяем направление сортировки
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            // Сортируем строки
+            rows.sort((a, b) => {
+                let aValue, bValue;
+
+                switch (column) {
+                    case 'id':
+                        aValue = parseInt(a.cells[0].textContent);
+                        bValue = parseInt(b.cells[0].textContent);
+                        break;
+                    case 'name':
+                        aValue = a.cells[1].textContent.toLowerCase();
+                        bValue = b.cells[1].textContent.toLowerCase();
+                        break;
+                    case 'type':
+                        aValue = a.cells[2].textContent.toLowerCase();
+                        bValue = b.cells[2].textContent.toLowerCase();
+                        break;
+                    case 'status':
+                        aValue = a.cells[3].querySelector('.status-badge').textContent.toLowerCase();
+                        bValue = b.cells[3].querySelector('.status-badge').textContent.toLowerCase();
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (aValue < bValue) return currentSort.direction === 'asc' ? -1 : 1;
+                if (aValue > bValue) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Обновляем классы заголовков
+            document.querySelectorAll('.devices-table th[data-sort]').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            const activeHeader = document.querySelector(`.devices-table th[data-sort="${column}"]`);
+            activeHeader.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+
+            // Перестраиваем таблицу
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function filterTable() {
+            const status = document.getElementById('statusFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('.devices-table tbody tr');
+            
+            rows.forEach(row => {
+                const statusBadge = row.querySelector('.status-badge');
+                const typeText = row.cells[2].textContent.toLowerCase();
+                const rowText = row.textContent.toLowerCase();
+                
+                let show = true;
+                
+                if (status !== 'all') {
+                    const statusClassMap = {
+                        'normal': 'status-normal',
+                        'warning': 'status-warning',
+                        'error': 'status-error',
+                        'repair': 'status-repair',
+                        'reserve': 'status-reserve'
+                    };
+                    if (!statusBadge.classList.contains(statusClassMap[status])) show = false;
+                }
+                
+                if (type !== 'all') {
+                    const typeMap = {
+                        'keyboard': 'клавиатура',
+                        'mouse': 'мышь',
+                        'monitor': 'монитор',
+                        'printer': 'принтер'
+                    };
+                    if (typeText !== typeMap[type]) show = false;
+                }
+                
+                if (search && !rowText.includes(search)) {
+                    show = false;
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>

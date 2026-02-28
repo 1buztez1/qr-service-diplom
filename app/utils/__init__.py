@@ -1,0 +1,1 @@
+from .qr_code import generate_qr_base64

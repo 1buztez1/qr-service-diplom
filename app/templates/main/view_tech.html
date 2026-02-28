@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ДЕТАЛИ УСТРОЙСТВА</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: #FFFFFF;
+            color: #000000;
+            line-height: 1.4;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 2px solid #000000;
+            padding: 30px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 25px;
+            padding: 10px 20px;
+            background: #000000;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            border: 2px solid #000000;
+        }
+
+        .back-button:hover {
+            background: #333333;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .detail-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .detail-status {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            font-weight: 700;
+            border: 2px solid #000000;
+            font-size: 1.1rem;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .status-normal { background: #00d26a; color: #000000; }
+        .status-warning { background: #ffeb00; color: #000000; }
+        .status-error { background: #ff375f; color: #FFFFFF; }
+        .status-repair { background: #375fff; color: #FFFFFF; }
+        .status-reserve { background: #666666; color: #FFFFFF; }
+
+        .status-select {
+            padding: 10px 20px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            color: #000000;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: 'IBM Plex Mono', monospace;
+            transition: all 0.2s;
+            min-width: 200px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .status-select:hover {
+            background-color: #f5f5f5;
+        }
+
+        .status-select:focus {
+            outline: none;
+            box-shadow: inset 0 0 0 2px #000000;
+        }
+
+        /* Цвета для разных статусов */
+        .status-select.status-1 {
+            background-color: #00d26a;
+            color: #000000;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+
+        .status-select.status-2 {
+            background-color: #ffeb00;
+            color: #000000;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+
+        .status-select.status-3 {
+            background-color: #ff375f;
+            color: #FFFFFF;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+
+        .status-select.status-4 {
+            background-color: #375fff;
+            color: #FFFFFF;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+
+        .status-select.status-5 {
+            background-color: #666666;
+            color: #FFFFFF;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        }
+
+        /* Исправленная сетка */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .detail-item {
+            padding: 25px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            min-height: 180px;
+        }
+
+        .detail-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #666;
+            min-height: 40px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Стили для QR-кода - теперь он обычный grid-элемент */
+        .qr-item {
+            grid-column: span 1;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .qr-code {
+            display: inline-block;
+            padding: 25px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .qr-image {
+            width: 250px;
+            height: 250px;
+            border: 4px solid #000000;
+            padding: 10px;
+            background: #FFFFFF;
+            margin-bottom: 20px;
+        }
+
+        .qr-button {
+            width: 200px;
+            height: 50px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            color: #000000;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .qr-button:hover {
+            background: #f5f5f5;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #FFFFFF;
+            padding: 30px;
+            border: 4px solid #000000;
+            max-width: 400px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-content img {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #000000;
+        }
+
+        .close-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            background: #333333;
+            /* keep size and position static to avoid layout shifts */
+        }
+
+        .comment-section {
+            margin-top: 40px;
+            padding: 30px;
+            border: 2px solid #000000;
+            background: #f5f5f5;
+        }
+
+        .comment-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        .comment-button {
+            padding: 12px 25px;
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .comment-button:hover {
+            background: #333333;
+        }
+
+        .history-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #000000;
+            font-size: 1.1rem;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Анимация появления */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .detail-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .qr-item {
+                grid-column: span 1;
+            }
+            
+            .qr-image {
+                width: 220px;
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+                border-width: 2px;
+            }
+            
+            .detail-title {
+                font-size: 2rem;
+            }
+            
+            .detail-grid {
+                gap: 20px;
+            }
+            
+            .detail-item {
+                padding: 20px;
+                min-height: 160px;
+            }
+            
+            .qr-code {
+                padding: 20px;
+            }
+            
+            .history-section {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .detail-title {
+                font-size: 1.8rem;
+                width: 100%;
+            }
+            
+            .status-badge {
+                min-width: 100%;
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+            
+            .detail-label {
+                font-size: 1rem;
+                min-height: 35px;
+            }
+            
+            .detail-value {
+                font-size: 1.3rem;
+            }
+            
+            .qr-image {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .qr-info {
+                font-size: 1rem;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .detail-title {
+                font-size: 1.6rem;
+            }
+            
+            .detail-item {
+                padding: 18px;
+                min-height: 150px;
+            }
+            
+            .qr-image {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .history-title {
+                font-size: 1.6rem;
+            }
+            
+            .history-item {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <a href="{{url_for('main.index')}}" class="back-button">← НАЗАД К СПИСКУ</a>
+        
+        <div class="detail-header">
+            <h1 class="detail-title">{{tech.tech_name}}</h1>
+            <div class="detail-status">
+                {% if current_user.group_id == 1 %}
+                <!-- Выпадающий список для администраторов -->
+                <select id="status-select" onchange="changeStatus(this)" class="status-select">
+                    <option value="1" {% if tech.status.id == 1 %}selected{% endif %}>✓ Норма</option>
+                    <option value="2" {% if tech.status.id == 2 %}selected{% endif %}>⚠ Внимание</option>
+                    <option value="3" {% if tech.status.id == 3 %}selected{% endif %}>✗ Неисправна</option>
+                    <option value="4" {% if tech.status.id == 4 %}selected{% endif %}>🔧 Ремонт</option>
+                    <option value="5" {% if tech.status.id == 5 %}selected{% endif %}>⊡ Резерв</option>
+                </select>
+                {% else %}
+                <!-- Badge статуса для простых пользователей -->
+                {% if tech.status.id == 1 %}
+                <span class="status-badge status-normal">{{ tech.status.status_name }}</span>
+                {% endif %}
+                {% if tech.status.id == 2 %}
+                <span class="status-badge status-warning">{{ tech.status.status_name }}</span>
+                {% endif %}
+                {% if tech.status.id == 3 %}
+                <span class="status-badge status-error">{{ tech.status.status_name }}</span>
+                {% endif %}
+                {% if tech.status.id == 4 %}
+                <span class="status-badge status-repair">{{ tech.status.status_name }}</span>
+                {% endif %}
+                {% if tech.status.id == 5 %}
+                <span class="status-badge status-reserve">{{ tech.status.status_name }}</span>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="detail-grid">
+            <div class="detail-item">
+                <div class="detail-label">ID УСТРОЙСТВА</div>
+                <div class="detail-value">{{tech.id}}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">ТИП УСТРОЙСТВА</div>
+                <div class="detail-value">{{tech.tech_group.group_name}}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">СЕРИЙНЫЙ НОМЕР</div>
+                <div class="detail-value">{{tech.serial_number}}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">ДАТА ПОСТУПЛЕНИЯ</div>
+                <div class="detail-value">{{tech.created_at.strftime('%d.%m.%Y') if tech.created_at else 'НЕТ ДАННЫХ'}}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="detail-label">ПОСЛЕДНЕЕ ОБСЛУЖИВАНИЕ</div>
+                <div class="detail-value">{{tech.updated_at.strftime('%d.%m.%Y') if tech.updated_at else 'НЕТ ДАННЫХ'}}</div>
+            </div>
+            
+            <!-- Блок QR-кода -->
+            <div class="detail-item qr-item">
+                <div class="detail-label">QR-КОД УСТРОЙСТВА</div>
+                {% if qr_code_base64 %}
+                <button onclick="openModal()" class="qr-button">ПОКАЗАТЬ QR-КОД</button>
+                {% else %}
+                <form method="POST" action="{{ url_for('tech.generate_qr', tech_id=tech.id) }}" style="display: inline;">
+                    <button type="submit" class="qr-button">СОЗДАТЬ QR-КОД</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="comment-section">
+            <h3 class="comment-title">ДОБАВИТЬ КОММЕНТАРИЙ</h3>
+            <form method="POST" action="{{ url_for('tech.add_comment', tech_id=tech.id) }}">
+                <textarea name="content" class="comment-textarea" placeholder="Введите ваш комментарий..." required></textarea>
+                <button type="submit" class="comment-button">ДОБАВИТЬ КОММЕНТАРИЙ</button>
+            </form>
+        </div>
+        
+        <div class="history-section">
+            <h3 class="history-title">ИСТОРИЯ СОБЫТИЙ</h3>
+            <ul class="history-list">
+                 {% if comments_count > 0 %}
+                    {% for event in comments %}
+                    <li class="history-item">{{ event.created_at.strftime('%d.%m.%Y') }} - {% if event.user %}{{ event.user.f_name }} {{ event.user.l_name }}{% else %}Неизвестный{% endif %}: {{ event.content }}</li>
+                    {% endfor %}
+                {% else %}
+                    <li class="history-item">История событий отсутствует</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Модальное окно для QR-кода -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code">
+            <br>
+            <button onclick="closeModal()" class="close-button">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('qrModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+
+        // Закрытие по клику вне модала
+        window.onclick = function(event) {
+            var modal = document.getElementById('qrModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function changeStatus(selectElement) {
+            const statusId = selectElement.value;
+            const techId = {{ tech.id }};
+            
+            // Обновляем цвет select
+            updateStatusColor(selectElement, statusId);
+            
+            if (statusId) {
+                fetch(`/tech/change_status/${techId}/${statusId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Ошибка при изменении статуса');
+                        location.reload();
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    location.reload();
+                });
+            }
+        }
+
+        function updateStatusColor(selectElement, statusId) {
+            // Удаляем все классы статусов
+            selectElement.classList.remove('status-1', 'status-2', 'status-3', 'status-4', 'status-5');
+            // Добавляем новый класс
+            selectElement.classList.add('status-' + statusId);
+        }
+
+        // Инициализируем цвет при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelect = document.getElementById('status-select');
+            if (statusSelect) {
+                updateStatusColor(statusSelect, statusSelect.value);
+            }
+        });
+    </script>
+    
+</body>
+</html>

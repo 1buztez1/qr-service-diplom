@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить пользователя</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: #FFFFFF;
+            color: #000000;
+            line-height: 1.4;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .vertical-nav {
+            width: 240px;
+            min-height: 100vh;
+            background: #FFFFFF;
+            border-right: 2px solid #000000;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 2rem;
+            background: #000000;
+            color: #FFFFFF;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 15px;
+            letter-spacing: -2px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #ff375f;
+            flex-shrink: 0;
+        }
+
+        .nav-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #000000;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 15px;
+            border: 2px solid #000000;
+            transition: all 0.2s;
+            background: #FFFFFF;
+            text-align: left;
+        }
+
+        .nav-link.active {
+            background: #000000;
+            color: #FFFFFF;
+            transform: translateX(4px);
+        }
+
+        .nav-link:hover:not(.active) {
+            background: #ffeb00;
+            transform: translateX(2px);
+        }
+
+        .stats-summary {
+            margin-bottom: 20px;
+            padding: 12px;
+            border: 2px solid #000000;
+            background: #f5f5f5;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .nav-footer {
+            font-size: 0.8rem;
+            color: #666;
+            border-top: 1px solid #000000;
+            padding: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 25px 40px;
+            max-width: calc(100vw - 240px);
+        }
+
+        .header-section {
+            margin-bottom: 25px;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #000000;
+            background: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            background: #ffeb00;
+        }
+
+        .form-submit {
+            padding: 12px 30px;
+            border: 2px solid #000000;
+            background: #000000;
+            color: #FFFFFF;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .form-submit:hover {
+            background: #ff375f;
+            transform: translateY(-2px);
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-messages .alert {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 2px solid #000000;
+            background: #f5f5f5;
+            color: #000000;
+            font-weight: 700;
+        }
+
+        .error {
+            color: #ff375f;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .vertical-nav {
+                position: static;
+                width: 100%;
+                min-height: auto;
+                max-height: 70vh;
+                border-right: none;
+                border-bottom: 2px solid #000000;
+                padding: 0;
+            }
+            .logo { margin: 15px; font-size: 1.8rem; }
+            .nav-scrollable { padding: 0 15px; max-height: calc(70vh - 140px); }
+            .nav-links { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 6px; }
+            .nav-link { padding: 8px 12px; font-size: 0.9rem; flex: 1; min-width: 120px; text-align: center; }
+            .stats-summary { display: none; }
+            .main-content { margin-left: 0; padding: 15px; max-width: 100%; }
+            .header-section { margin-bottom: 15px; padding-bottom: 15px; }
+            .page-title { font-size: 1.6rem; }
+            .form-container { max-width: 100%; margin: 0; }
+            .form-group { margin-bottom: 15px; }
+            .form-input, .form-select { padding: 10px 12px; font-size: 1rem; }
+            .form-submit { padding: 12px 20px; font-size: 1rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="vertical-nav">
+        <div class="logo">HARDWARE</div>
+        <div class="nav-scrollable">
+            <div class="nav-links">
+                <a href="{{ url_for('main.index') }}" class="nav-link">ПЕРИФЕРИЯ</a>
+                <a href="{{ url_for('admin.users') }}" class="nav-link active">ПОЛЬЗОВАТЕЛИ</a>
+                <!-- <a href="#" class="nav-link">СЕТЬ</a>
+                <a href="#" class="nav-link">СКЛАД</a> -->
+            </div>
+        </div>
+        <div class="nav-footer">
+            АДМИН-ПАНЕЛЬ v2.5
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="header-section">
+            <h1 class="page-title">ДОБАВИТЬ НОВОГО ПОЛЬЗОВАТЕЛЯ</h1>
+        </div>
+
+        <div class="form-container">
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label class="form-label" for="username">{{ form.username.label.text }}</label>
+                    {{ form.username(class="form-input") }}
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">{{ form.email.label.text }}</label>
+                    {{ form.email(class="form-input") }}
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="l_name">{{ form.l_name.label.text }}</label>
+                    {{ form.l_name(class="form-input") }}
+                    {% if form.l_name.errors %}
+                        {% for error in form.l_name.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="f_name">{{ form.f_name.label.text }}</label>
+                    {{ form.f_name(class="form-input") }}
+                    {% if form.f_name.errors %}
+                        {% for error in form.f_name.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="m_name">{{ form.m_name.label.text }}</label>
+                    {{ form.m_name(class="form-input") }}
+                    {% if form.m_name.errors %}
+                        {% for error in form.m_name.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">{{ form.password.label.text }}</label>
+                    {{ form.password(class="form-input") }}
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="confirm_password">{{ form.confirm_password.label.text }}</label>
+                    {{ form.confirm_password(class="form-input") }}
+                    {% if form.confirm_password.errors %}
+                        {% for error in form.confirm_password.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="group_id">{{ form.group_id.label.text }}</label>
+                    {{ form.group_id(class="form-select") }}
+                    {% if form.group_id.errors %}
+                        {% for error in form.group_id.errors %}
+                            <div class="error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.submit(class="form-submit") }}
+                </div>
+            </form>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ url_for('admin.users') }}" style="color: #000000; text-decoration: none; font-weight: 700;">← НАЗАД К СПИСКУ ПОЛЬЗОВАТЕЛЕЙ</a>
+        </div>
+    </div>
+</body>
+
+</html>

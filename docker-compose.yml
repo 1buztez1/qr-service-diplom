@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:15
+    container_name: postgres-container
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_datas:/var/lib/postgresql/data
+    
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'    
+          memory: 2G     
+        reservations:
+          cpus: '0.5'    
+          memory: 512M   
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s      
+      timeout: 10s       
+      retries: 3         
+      start_period: 40s  
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qr-service-app
+    command: uvicorn main:asgi_app --host 0.0.0.0 --port 5001 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    depends_on:
+      - postgresql
+    restart: unless-stopped
+
+volumes:
+  postgres_datas:
+    driver: local
+    labels:
+      description: "PostgreSQL data volume"
+      backup: "daily"
